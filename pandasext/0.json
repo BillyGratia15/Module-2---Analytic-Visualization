@@ -1,0 +1,16 @@
+[   {
+        "id":0,
+        "nama":"Ali",
+        "kota":"Jakarta"
+    },
+    {
+        "id":1,
+        "nama":"Bambang",
+        "kota":"Yogyakarta"
+    },
+    {
+        "id":2,
+        "nama":"Cici",
+        "kota":"Medan"
+    }
+]

@@ -1,0 +1,74 @@
+https://www.code2bits.com/how-to-run-mongodb-on-macos/
+documentation --> https://docs.mongodb.com/
+
+start mongodb:
+->sudo mkdir -p /data/db
+->sudo chown $USER /data/db
+->mongod
+->mongod --dbpath "/new/db/path"
+
+buka terminal baru 
+-> mongo 
+-> show dbs
+
+bikin database -> use tesflask
+
+cara tau kita di database mana -> db
+
+delete database: 
+-> use tesflask
+-> db.dropDatabase()
+
+create USER
+->db.createUser({user: "billy", pwd: "12345", roles: ["readWrite","dbAdmin"]})
+
+buat collection untuk isi database:
+->db.createCollection('produk')
+->show dbs  >>>>>>>>>UDA MUNCUL
+
+untuk cek collection ->show collections   ---> produk
+
+masukin data ke collection ->db.produk.insert({nama: 'Drone', harga: 2000000})
+
+liat isi collectionnya yang uda diinsert:
+-> db.produk.find()
+-> db.produk.find().pretty() {jadi syantikkkk}
+
+insert collection:
+-> db.produk.insert(
+... [
+... {nama: 'Kemeja', harga: 200000}, 
+... {nama: 'Jas Hujan', harga: 100000, warna: 'hijau'},
+... {nama: 'Celengan', harga: 30000}]
+... )
+
+find dalam collection -> db.produk.find({nama: 'Drone'}).pretty()
+
+find harga lebih dari 1000000 (pake gt atau gte: greater than): 
+-> db.produk.find({harga: {$gt: 1000000}}).pretty()
+-> db.produk.find({harga: {$gte: 1000000}}).pretty()
+
+find harga kurang dari 1000000 (pake lt atau lte: lower than): 
+-> db.produk.find({harga: {$lt: 1000000}}).pretty()
+-> db.produk.find({harga: {$lte: 1000000}}).pretty()
+
+find harga kurang dari 1000000 tapi pake limit:
+-> db.produk.find({harga: {$lt: 1000000}}).limit(1).pretty()  ------> jadi munculnya cuma data id 1
+
+munculin harga kurang dari 1000000 tapi ada yang di skip:
+-> db.produk.find({harga: {$lt: 1000000}}).limit(2).skip(1).pretty() -----> id 1 di skip, munculin 2 data setelah data kedua = data 2 dan 3
+
+find bisa pake and bisa pake or
+-> db.produk.find({$and: [{harga: {$gt: 1000000}}, {warna: 'pink}]}).pretty() ----> yang muncul yang memenuhi 2 parameter 
+-> db.produk.find({$or: [{harga: {$gt: 1000000}}, {warna: 'pink'}]}).pretty() ----> hasilnya salah satu parameter terpenuhi aja muncul
+
+update isi collection:
+-> db.produk.update({nama: 'Drone'},{nama: 'Drone DJI', harga : 1500000}) ---> semua data Drone diganti jadi Drone DJI
+
+ubah harganya doang:
+-> db.produk.update({nama: 'Celengan'}, {$set: {harga: 50000}})
+
+untuk rename:
+-> db.produk.update({nama: 'Celengan'}, {$rename: {'harga': 'price'}})
+
+

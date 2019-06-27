@@ -1,0 +1,12 @@
+Senin 6 Mei 2019
+
+Bikin view untuk data yang sering dimunculin dibikin alias:
+
+VIEW INSERTABLE:
+-> create view dataku as select * from mytable where usia > 23;
+-> select * from dataku;
+
+VIEW UNINSERTABLE:
+-> create algorithm = temptable view viewku as select * from mytable where usia > 24;
+-> insert blabla -----> error.
+

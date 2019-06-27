@@ -1,0 +1,158 @@
+Senin, 29 April 2019
+
+My SQL
+====================================
+cara bikin database: create database <nama database>;
+hapus:  drop database <nama database>;
+pakai: use <namadatabase>;
+cr tau sedang di database yg mana: select database();
+tempat menyimpan data di database: table --> show tables;
+
+sblm bikin tabel: tentukan dulu kolomnya apa aja, tau juga isi datanya apa
+caranya:
+create table <nama tabel>(
+    -> <nama kolom> <tipe data>,
+    -> <nama kolom> <tipe data>(jumlah maks. karakter kalau string),     --> string = varchar
+    -> );
+
+describe <namatable>;
+    --> integer by default 11 digit
+    --> NULL = YES : data bisa kosong
+    --> kalau harus ada isinya: NULL = NO
+    --> KEY : primary key (membuat suatu data dgn data lainnya berbeda), foreign key, composite key (kombinasi lbh dari 1 kolom yg membuat identitas unique)
+    --> EXTRA: ekstra information
+
+tampilkan semua kolom dari tabel karyawan: select * from <nama table>
+
+masukin data ke tabel karyawan: insert into <namatabel> values(
+    -> <row 1 kolom 1>, <row 1 kolom 2>, <row 1 kolom 3>);
+
+insert multiple data:
+insert into karyawan values
+    -> (3, 'Caca', 'Demak'),
+    -> (4, 'Deni', 'Palu'),
+    -> (5, 'Euis', 'Sby');
+
+keluar dari coding: ctrl+C
+
+tipe2 data SQL: https://dev.mysql.com/doc/refman/8.0/en/data-types.html
+
+
+bikin tabel pegawai:
+create table pegawai(
+    -> id int auto_increment,       --> nambah sendiri kontennya, jadi bisa gausah ikut disii 
+    -> name varchar(50) default 'Anonim',       --> default biar kalo misalkan ga diisi / kosong, akan memberikan nilai tertentu
+    -> email varchar(100) not null unique,          --> not null agar tidak boleh kosong. unique karena kolom ini bersifat spt primary key tapi bukan primary key (karena sudah di id)
+    -> bod date,        --> bod gaboleh not null
+    -> gender enum('P', 'L'),           --> buat pilihan yang bisa dipilih, bisa pake enum() atau set()
+    -> created_at timestamp default current_timestamp,          --> auto fill dengan waktu saat tabel itu diisi
+    -> primary key (id)     --> perlu di state id sbg primary key karena id sudah ditentukan auto increment, kalau ga ya error nanti
+    -> );
+
+insert ke tabel:
+insert into pegawai (name, email, bod, gender) values
+    -> ('Andi', 'andi@andi.id', '1992-11-26', 'L');
+insert into pegawai (email, bod, gender) values
+    -> ('budi@budi.id', '1992-11-26', 'L');
+
+hanya menampilkan name & gender:
+select name, gender from pegawai;
+
+tampilin semua properti dari nama 'Andi':
+select * from pegawai where name = 'Andi';
+
+tampilin id genap:
+select * from pegawai where id % 2 = 0;
+
+urutkan berdasarkan id dari terbesar ke terkecil:
+select * from pegawai where id % 2 = 0 order by id desc;
+
+urutin id descending dan gender ascending:
+select * from pegawai where id % 2 = 0 order by id desc, gender;
+
+hapus data:
+delete from pegawai where id = 1;
+
+edit data:
+    update pegawai set name = 'Hadi'; --> semua nama jadi Hadi
+    update pegawai set name = 'Budi' where id = 2;
+
+edit 2 data sekaligus:
+update pegawai set
+    -> name = 'Rano', gender = 'L'
+    -> where id = 2;
+
+ubah struktur data tabel (edit tabel):
+alter table pegawai
+    -> add column                                                   --> pilih metode editnya
+    -> gaji int not null default 3000;
+
+ngubah urutan kolom gaji:
+alter table pegawai
+    -> modify column
+    -> gaji int default 3000
+    -> after bod;
+
+ganti nama tabel gaji:
+alter table pegawai
+    -> rename column
+    -> gaji to upah;
+
+hapus kolom:
+alter table pegawai
+    -> drop column
+    -> bod;
+
+add 3 more datas;
+
+tampilin data upah dalam rentang:
+select * from pegawai
+    -> where upah between 3200 and 5200;
+    
+select * from pegawai
+    -> where upah > 4000 and gender = 'p';
+
+nama yang diawali huruf h:
+select * from pegawai
+    -> where name like 'h%';
+
+data yang diakhiri i:
+select * from pegawai
+    -> where name like '%i';
+
+nama yang di tengahnya ada huruf-n nya:
+select * from pegawai
+    -> where name like '%n%';
+
+nama yang gaada huruf n -nya:
+select * from pegawai
+    -> where name not like '%n%';
+
+jumlah data di kolom pegawai:
+select count(*) from pegawai;
+
+select count(*) as jumlah_pegawai from pegawai;     --> kasih nama alias aja tp ga ngeganti
+
+jumlah laki2:
+select count(*) as jumlah_L from pegawai where gender = 'L';
+
+misal pingin nampilin kolom untuk sesaat (bukan buat nambah kolom di tabel utama):
+select name, upah, 0.03 * upah as pajak from pegawai;
+
+nampilin upah terendah tertinggi:
+select min(upah) as upah_terendah from pegawai;
+select max(upah) as upah_terendah from pegawai;
+
+tampilin data pegawai yg upahnya terendah:
+select * from pegawai
+    -> where upah =
+    -> (
+    -> select max(upah) as upah_tertinggi from pegawai
+    -> );
+    ---------> nama datanya sub query.
+
+tampilin total gaji:
+select sum(upah) from pegawai;
+
+rata2 upah:
+select avg(upah) from pegawai;

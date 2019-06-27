@@ -1,0 +1,10 @@
+16 May 2019
+
+mysql> create database digimon;
+mysql> use digimon;
+mysql> create table digimon(
+    -> id int auto_increment,
+    -> nama varchar(255),
+    -> gambar varchar(255),
+    -> primary key (id);
+mysql> describe digimon;

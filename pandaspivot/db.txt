@@ -1,0 +1,18 @@
+buat database fauna di mysql
+
+mysql> create database fauna;
+mysql> use fauna;
+mysql> create table aves(
+    -> id int auto_increment,
+    -> nama varchar(100) default 'no name',
+    -> usia int default 0,
+    -> primary key (id)
+    -> );
+mysql> describe aves;
+mysql> insert into aves(nama,usia) values
+    -> ('Ayam', 2),
+    -> ('Merpati',3),
+    -> ('Merak', 4),
+    -> ('Bebek',5);
+mysql> select * from aves;
+

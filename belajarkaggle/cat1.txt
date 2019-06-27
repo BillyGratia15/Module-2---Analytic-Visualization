@@ -1,0 +1,6 @@
+
+pip3 install kaggle / pip3 install --user kaggle
+create new API in my account di website kaggle
+folder .kaggle dalam /Users/billygratia/
+masukin folder .kaggle json
+chmod 600 ~/.kaggle/kaggle.json

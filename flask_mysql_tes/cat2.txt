@@ -1,0 +1,268 @@
+Selasa, 30 April 2019
+
+mySQL
+============================
+use purwadhika;
+select database();
+show tables;
+show full tables;
+
+tampilkan data upah terendah dan tertinggi dari tabel pegawai:
+select
+    -> max(upah) as tertinggi,
+    -> min(upah) as terendah
+    -> from pegawai;
+
+tampilkan semua properti data pemilik upah tertinggi (pakai sub query):
+select * from pegawai
+    -> where upah =
+    -> (select max(upah) from pegawai
+    -> );
+
+upah terendah:
+select * from pegawai
+    -> where upah =
+    -> (
+    -> select min(upah) from pegawai
+    -> );
+
+data karyawan yg gajinya terendah dan LAKI-LAKI:
+select * from pegawai
+    -> where upah = (select min(upah) from pegawai)
+    -> and gender = 'L';
+
+hapus kolom gender dan email:
+alter table pegawai
+    -> drop email, drop gender;
+
+sisipkan kolom kota sebelah upah:
+alter table pegawai
+    -> add column
+    -> kota varchar(50) default 'Jakarta'
+    -> after upah;
+
+edit data yang id-nya ganjil --> ubah kota jadi Bandung:
+update pegawai set
+    -> kota = 'Bandung'
+    -> where id % 2 = 1;
+
+or 
+update pegawai set
+    -> kota = 'Palu'
+    -> where id % 2 <> 0;
+
+or 
+update pegawai set
+    -> kota = 'Bogor'
+    -> where id % 2 != 0;
+
+urutkan tabel berdasarkan kota (ascending):
+select * from pegawai
+    -> order by kota;
+
+descending:
+select * from pegawai
+    -> order by kota desc;
+
+order brdsrkan 2 kolom:
+select * from pegawai
+    -> order by
+    -> kota desc,
+    -> id desc;
+
+tampilkan rata2 upah:
+select avg(upah) as rata_upah from pegawai;
+
+tampil rata2 upah yang kotanya ada di jakart:
+select avg(upah) as rata_upah from pegawai
+    -> where kota = 'Jakarta';
+
+rata2 upah dikelompokkan berdasarkan kota:
+select avg(upah) as rata_upah from pegawai
+    -> group by kota;
+
+tampil kota dan rata2 upahnya dimana nilai rata2 upahnya lebih dari 3500:
+select kota, avg(upah) as rata_upah from pegawai
+    -> group by kota
+    -> having rata_upah > 3500;                                     ----> gabisa pakai where
+
+
+tampil nama dan upah dari tabel pegawai yg gajinya lebih dari gaji rata2 karyawan dari Jakarta:
+select name, upah from pegawai
+    -> where upah >
+    -> (
+    -> select avg(upah) from pegawai where kota = 'Jakarta'
+    -> );
+
+rata2 upah dari pegawai yang upahnya melebihi rata2 upah karyawan dari Jakarta:
+ select avg(upah) from pegawai
+    -> where upah >
+    -> (
+    -> select avg(upah) from pegawai where kota = 'Jakarta'
+    -> );
+
+==============================================================================================
+
+New Table : join 2 tables
+========================
+bikin 2 tabel yg terpisah:
+create table user(
+    -> id int not null auto_increment,
+    -> user varchar(30) default 'anonymous',
+    -> kota varchar(30),
+    -> primary key (id));
+
+create table ranking(
+    -> id int not null auto_increment,
+    -> status varchar(30) default 'Newbie',
+    -> primary key (id));
+
+kedua tabel saling berhubungan: id di user mencerminkan data yg sama dengan id di ranking.
+
+assign kolom id sebagai foreign key sehingga bisa saling akses data antar kedua tabel tsb.
+foreign key: sebagai penghubung / jembatan
+
+insert tabel user:
+insert into user (user, kota) values
+    -> ('Andi', 'Jakarta'),
+    -> ('Budi', 'Jakarta'),
+    -> ('Cici', 'Bandung'),
+    -> ('Dewi', 'Sukabumi');
+
+insert tabel ranking:
+insert into ranking (status) values
+    -> ('Gold'), ('Platinum'), ('Gold'), ('Silver');
+
+tampil joint tables with id as foreign key:
+select * from
+    -> user join ranking
+    -> on user.id = ranking.id;
+
+kalau kolom id dari user aja yg ditampilin:
+select user.id, user, kota, status from
+    -> user join ranking
+    -> on user.id = ranking.id;
+
+or:
+select user.id, user, kota, status from
+    -> ranking join user
+    -> on user.id = ranking.id;
+
+or:
+select user.id, user, kota, status from
+    -> user join ranking
+    -> using(id);
+
+
+insert into user (user, kota) values
+    -> ('Euis', 'Cilacap'),
+    -> ('Fafa', 'Tegal');
+
+kalau id user lbh banyak dari id ranking:
+select * from
+    -> user join ranking
+    -> using(id);           --> hanya user dengan id 1-4 aja yg ditampilin 
+
+inner join (hanya data yg punya relasi yg ditampilkan)
+select * from
+    -> user inner join ranking
+    -> on user.id = ranking.id;
+
+select * from
+    -> ranking inner joing user
+    -> on user.id = ranking.id;             ----> sama aja
+
+to understand more about SQL all type of joins: https://external-preview.redd.it/M5QHWsp2vgZ-3QDZ4m-qS58lsOUgDNHau8trSFzS8H0.jpg?width=966&auto=webp&s=8b65d4a6bade772e7632325cfd47dbe1e083960f
+
+left join:
+select * from
+    -> user left join ranking
+    -> using (id);
+
+select * from
+    -> ranking left join user
+    -> using(id);
+
+right join:
+select * from
+    -> user right join ranking
+    -> using(id);           -----> hasilnya sama dengan ranking left join user
+
+==============================================================================================
+
+New Table :  liat sheet 2
+========================    
+create database tokoonline;
+use tokoonline;
+select database();
+create table users(
+    -> id_user int not null auto_increment,
+    -> username varchar(30) default 'Pembeli X',
+    -> created_at timestamp default current_timestamp,
+    -> edited_at timestamp default current_timestamp on update current_timestamp,               --> waktu kapan edit data terakhir
+    -> primary key (id_user)
+    -> );
+
+insert into users (username) values
+    -> ('Andi'),
+    -> ('Budi'),
+    -> ('Caca');
+
+edit data:
+ update users set
+    -> username = 'Andy'
+    -> where id_user = 1;
+
+create table products(
+    -> id_product int not null auto_increment,
+    -> product_name varchar(30) default 'Barang X',
+    -> primary key (id_product));
+
+insert into products (product_name) values
+    -> ('Drone'),
+    -> ('Kemeja');
+
+create table transaction(
+    -> id_user varchar(30) not null,
+    -> id_product varchar(30) not null);
+
+alter table transaction
+    -> modify column
+    -> id_user int  not null,
+    -> modify column
+    -> id_product int not null;
+
+insert into transaction values
+    -> (1, 1),
+    -> (1, 2),
+    -> (2, 2),
+    -> (3, 1);
+
+cara tau id apa beli product apa:
+select * from
+    -> users inner join transaction
+    -> on users.id_user = transaction.id_user
+    -> inner join products
+    -> on transaction.id_product = products.id_product;
+
+select username, product_name from
+    -> users inner join transaction
+    -> on users.id_user = transaction.id_user
+    -> inner join products
+    -> on transaction.id_product = products.id_product;
+
+or kalau cr backend:
+select username, product_name from
+    -> users, products, transaction
+    -> where
+    -> users.id_user = transaction.id_user
+    -> and
+    -> products.id_product = transaction.id_product;
+
+or dengan memberi nama alias:
+select username, product_name from
+    -> users u, products p, transaction t
+    -> where
+    -> u.id_user = t.id_user
+    -> and
+    -> p.id_product = t.id_product;
